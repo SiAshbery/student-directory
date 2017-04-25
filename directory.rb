@@ -81,6 +81,9 @@ def student_entry(students, cohorts)
 end
 
 def student_filter(students)
+    if students.empty?
+        puts "ERROR: There are no students to filter"
+    else
     puts "Enter 'letter' to filter by letter or 'length' to filter by length"
     input = gets.chomp
             if input.downcase == "letter"
@@ -94,6 +97,7 @@ def student_filter(students)
                 print_header
                 students.each{|x| x.each_value{|value| puts "#{value} (#{x[:cohort]} cohort)" if value.length <= number.to_i && value != :november }}
             end 
+    end
 
 end
 
