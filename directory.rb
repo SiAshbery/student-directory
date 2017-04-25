@@ -20,17 +20,17 @@ def print_header
     puts "-------------".center(150)
 end
 
-def print(students)
+def print_list(students)
     students.each_with_index do |student, index|
-    puts "#{index + 1} #{student[:name]} (#{student[:cohort]} cohort), Born in: #{student[:country]}, Height: #{student[:height]}, Hobbies: #{student[:hobbies]}"
+        puts "#{index + 1}: #{student[:name]} (#{student[:cohort]} cohort), Born in: #{student[:country]}, Height: #{student[:height]}, Hobbies: #{student[:hobbies]}"
     end
 end
 
 def print_footer(students)
     if students.length > 1
-    puts "Overall, we have #{names.count} great students!".center(150)
+    puts "Overall, we have #{students.count} great students!".center(150)
     elsif students.length == 1
-    puts "Overall, we have #{names.count} great student!".center(150)
+    puts "Overall, we have #{students.count} great student!".center(150)
     else
     puts "Sadly we have no students, great or otherwise :(".center(150)
     end
@@ -86,11 +86,11 @@ def student_entry(students, cohorts)
     end
 end
 
-def student_filter(students)
+def student_filter(students, cohorts)
     if students.empty?
         puts "ERROR: There are no students to filter"
     else
-    puts "Enter 'letter' to filter by letter or 'length' to filter by length"
+    puts "Please enter what you wish to filter by: 'letter', 'length' or 'cohort'"
     input = gets.chomp
             if input.downcase == "letter"
                 puts "Please enter a letter to filters for names beginning with that letter"
@@ -101,7 +101,19 @@ def student_filter(students)
                 puts "Please enter a number to filter for names of that length or less"
                 number = gets.chomp
                 print_header
-                students.each{|x| x.each_value{|value| puts "#{value} (#{x[:cohort]} cohort)" if value.length <= number.to_i && value != :november }}
+                students.each{|x| puts "#{x[:name]} (#{x[:cohort]} cohort)" if x[:name].length <= number.to_i }
+            elsif input.downcase == "cohort"
+                puts "Please enter a month to select students from that cohort"
+                requested_cohort = gets.chomp
+                    until cohorts.any?{|month| month == requested_cohort.downcase.to_sym}
+                            puts "ERROR: Please enter full name of month and check for typos"
+                            requested_cohort = gets.chomp
+                    end
+                print_header
+                students.each{|x| puts "#{x[:name]} (#{x[:cohort]} cohort)" if x[:cohort] == requested_cohort.downcase.to_sym}
+            
+            else
+                puts "ERROR: Unrecognized filter"
             end 
     end
 
@@ -118,7 +130,7 @@ def input_students
     until input.downcase == "end"  do
         #add the student hash to the array
         if input.downcase == "filter"
-            student_filter(students)
+            student_filter(students, cohorts)
             input_instructions
             input = gets.chomp
         elsif input.downcase == "student"
@@ -137,7 +149,7 @@ end
 
 students = input_students
 print_header
-print(students)
+print_list(students)
 print_footer(students)
 
 
