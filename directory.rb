@@ -20,20 +20,22 @@ end
 
 def save_students
    # open the file for writing
-   file = File.open("students.csv", "w")
+   puts "Please enter the file you wish to save to:"
+   filename = STDIN.gets.chomp
+    puts "WARNING: This file will be overwritten" if File.exist?(filename) #if it exists
+   File.open(filename, "w") do |file|
    #iterates over the array of students
-   @students.each do |student|
-       student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
-       csv_line = student_data.join(",")
-       file.puts csv_line
-   end
+        @students.each do |student|
+            student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
+            csv_line = student_data.join(",")
+            file.puts csv_line
+            end
+    end
     puts "File has been successfully saved"
 end
 
 def try_load_students
-   
     filename = ARGV.first #first argument from the command line
-    filename = "students.csv" if ARGV.empty?
    return if filename.nil? # get out of this method if filename isn't present
     if File.exist?(filename) #if it exists
         load_students(filename)
@@ -45,13 +47,20 @@ def try_load_students
 end
 
 def load_students(filename = "students.csv")
-    @students = [] if @students.nil?   
-        file = File.open(filename, "r")
-        file.readlines.each do |line|
-        @name, @cohort, @country, @height, @hobbies = line.chomp.split(",")
-        cat_students
+        @students = [] if @students.nil?  
+        puts "Please enter file you wish to load from"
+        filename = STDIN.gets.chomp
+            if !File.exist?(filename)
+                puts "Sorry, this file does not exist" 
+                return
+            end
+            
+        File.open(filename, "r") do |file|
+            file.readlines.each do |line|
+            @name, @cohort, @country, @height, @hobbies = line.chomp.split(",")
+            cat_students
+            end
         end
-   file.close
    puts "File has been successfully loaded"
 end
 
@@ -81,6 +90,7 @@ def print_footer#(students)
 end
 
 def show_students
+    @students = [] if @students.nil?
     print_header
     print_list#(students)
     print_footer#(students) 
@@ -91,8 +101,8 @@ def main_menu_options
         puts "1. Add a new student"
         puts "2. Display current students"
         puts "3. Filter students"
-        puts "4. Save the list to students.csv"
-        puts "5. Load students from students.csv"
+        puts "4. Save the list to file"
+        puts "5. Load students from file"
         puts "9. Exit"  
 end
 
