@@ -88,7 +88,7 @@ def filter_menu_process(input)
                 puts "Please enter a letter to filters for names beginning with that letter"
                 letter = gets.chomp
                 print_header
-                @students.each{|x| x.each_value{|value| puts "#{value} (#{x[:cohort]} cohort)" if value[0].downcase == letter.downcase }}
+                @students.each{|x| puts "##{x[:name]} (#{x[:cohort]} cohort)" if x[:name][0].downcase == letter.downcase }
             #filters by name length
             when "2"
                 puts "Please enter a number to filter for names of that length or less"
