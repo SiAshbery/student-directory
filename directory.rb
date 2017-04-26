@@ -13,6 +13,11 @@
     #{name: "Norman Bates", cohort: :november},
     #]
 #and then we print them
+
+def cat_students
+ @students << {name: @name, cohort: @cohort.to_sym, country: @country, height: @height, hobbies: @hobbies}   
+end
+
 def save_students
    # open the file for writing
    file = File.open("students.csv", "w")
@@ -21,18 +26,29 @@ def save_students
        student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
        csv_line = student_data.join(",")
        file.puts csv_line
-      
-       
    end
     puts "File has been successfully saved"
 end
 
-def load_students
-   file = File.open("students.csv", "r")
-   file.readlines.each do |line|
-       name, cohort, country, height, hobbies = line.chomp.split(",")
-       @students << {name: name, cohort: cohort.to_sym, country: country, height: height, hobbies: hobbies}
-   end 
+def try_load_students
+   filename = ARGV.first #first argument from the command line
+   return if filename.nil? # get out of this method if filename isn't present
+    if File.exist?(filename) #if it exists
+        load_students(filename)
+        puts "Loaded #{@students.count} from #{filename}"
+    else #if it doesn't exist
+        puts "Sorry, #{filename} doesn't exist"
+        exit #quits the program
+    end
+end
+
+def load_students(filename = "students.csv")
+    @students = [] if @students.nil?   
+        file = File.open(filename, "r")
+        file.readlines.each do |line|
+        @name, @cohort, @country, @height, @hobbies = line.chomp.split(",")
+        cat_students
+        end
    file.close
    puts "File has been successfully loaded"
 end
@@ -115,22 +131,22 @@ def filter_menu_process(input)
             #filters by first letter of name
             when "1"
                 puts "Please enter a letter to filters for names beginning with that letter"
-                letter = gets.chomp
+                letter = STDIN.gets.chomp
                 print_header
                 @students.each{|x| puts "##{x[:name]} (#{x[:cohort]} cohort)" if x[:name][0].downcase == letter.downcase }
             #filters by name length
             when "2"
                 puts "Please enter a number to filter for names of that length or less"
-                number = gets.chomp
+                number = STDIN.gets.chomp
                 print_header
                 @students.each{|x| puts "#{x[:name]} (#{x[:cohort]} cohort)" if x[:name].length <= number.to_i }
             #filters by cohort month
             when "3"
                 puts "Please enter a month to select students from that cohort"
-                requested_cohort = gets.chomp
+                requested_cohort = STDIN.gets.chomp
                     until @cohorts.any?{|month| month == requested_cohort.downcase.to_sym}
                             puts "ERROR: Please enter full name of month and check for typos"
-                            requested_cohort = gets.chomp
+                            requested_cohort = STDIN.gets.chomp
                     end
                 print_header
                 @students.each{|x| puts "#{x[:name]} (#{x[:cohort]} cohort)" if x[:cohort] == requested_cohort.downcase.to_sym}
@@ -142,8 +158,6 @@ def filter_menu_process(input)
 end
 
 def input_menu
-    #sets an empty array ready to recieve student data
-    @students = []
     #An array filled with immutable symbols for each month of the year. We can use this to ensure cohort data is consistent
     @cohorts = [:january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december]
     #This loop ensures the program will always return to the menu until the user explicitly ends it.
@@ -151,7 +165,7 @@ def input_menu
         #print the menu options
         main_menu_options
         #records the users selection and then performs different actions depending on thei choice.
-        selection = gets.chomp
+        selection = STDIN.gets.chomp
         main_menu_process(selection)
     end
 end
@@ -164,54 +178,54 @@ def student_entry#(students, cohorts)
             #stores the name to a variable
                 until input.downcase == "y"
                     puts "Please enter the name of the student"
-                        name = gets.chomp
+                       @name = STDIN.gets.chomp
                         #ensures the user can't add an empty name
-                            while name == ""
+                            while @name == ""
                             puts "ERROR: Please enter the student's full name"
-                            name = gets.chomp
+                            @name = STDIN.gets.chomp
                             end
                     #stores the student's cohort in a variable
                     puts "Please input student's cohort month"
-                        cohort = gets.chomp
+                        @cohort = STDIN.gets.chomp
                         #because the cohorts are based on months and thus should only have 12 options. 
                         #This conditional ensures that the user can only enter recognized months
-                            until @cohorts.any?{|month| month == cohort.downcase.to_sym}
+                            until @cohorts.any?{|month| month == @cohort.downcase.to_sym}
                                 puts "ERROR: Please enter full name of month and check for typos"
-                                cohort = gets.chomp
+                                @cohort = STDIN.gets.chomp
                             end
-                        cohort = cohort.downcase.to_sym
+                        @cohort = @cohort.downcase.to_sym
                 #stores the student's birth place in a variable        
                     puts "Please input student's country of birth"
-                        country = gets.chomp
+                        @country = STDIN.gets.chomp
                         #ensures there are no empty entries
-                            while country == ""
+                            while @country == ""
                             puts "ERROR: Please enter the student's country/planet/realm of origin"
-                            country = gets.chomp
+                            @country = STDIN.gets.chomp
                             end
                  #stores the student's height in a variable, it asks for cm and numbers for consistency           
                     puts "Please input the student's height in cm using numbers only"
-                        height = gets.chomp
-                            while height == "" || height.to_i.to_s != height 
+                        @height = STDIN.gets.chomp
+                            while @height == "" || @height.to_i.to_s != @height 
                             puts "ERROR: Please enter the student's height in cm using numbers only"
-                            height = gets.chomp
+                            @height = STDIN.gets.chomp
                             end
                 # Stores the student's hobbies in a variable    
                     puts "Please add the student's hobbies"
-                        hobbies = gets.chomp
+                        @hobbies = STDIN.gets.chomp
                         #Ensures hobby returns a default value if field left blank
-                        hobbies = "none" if hobbies == ""
+                        @hobbies = "none" if @hobbies == ""
                     
-                    puts "Name: #{name}, Cohort: #{cohort}, Place of Origin: #{country}, Height: #{height}cm, Hobbies: #{hobbies}."
+                    puts "Name: #{@name}, Cohort: #{@cohort}, Place of Origin: #{@country}, Height: #{@height}cm, Hobbies: #{@hobbies}."
                     puts "Is this information correct? If yes enter 'y' otherwise hit return"
-                    input = gets.chomp
+                    input = STDIN.gets.chomp
                 end
                 #all of the info we have stored in the variables is concatinated to the students array in a hash with matching keys    
-                @students << {name: name, cohort: cohort, country: country, height: height, hobbies: hobbies}
+                cat_students
                 #Displays current student amount
                 puts "We now have #{@students.count} students"
                 #get another name from the user or allow them to return to menu
                 puts "Enter 'stop' to finish or press return again to continue"
-                input = gets.chomp
+                input = STDIN.gets.chomp
     end
 end
 
@@ -223,12 +237,12 @@ def student_filter#(students, cohorts)
     #gives the user options on how to filter names
     filter_menu_options
     #stoes the selection in a variable and then performs a different action based on which options was chosen.
-    input = gets.chomp
+    input = STDIN.gets.chomp
     filter_menu_process(input) 
     end
 
 end
 
-
+try_load_students
 input_menu
 
