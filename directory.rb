@@ -21,9 +21,10 @@ def save_students
        student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
        csv_line = student_data.join(",")
        file.puts csv_line
-       puts "File has been successfully saved"
+      
        
    end
+    puts "File has been successfully saved"
 end
 
 def load_students
@@ -161,44 +162,49 @@ def student_entry#(students, cohorts)
     #repeates the student entry until the user chooses to stop and return to the menu
     until input.downcase == "stop"
             #stores the name to a variable
-                puts "Please enter the name of the student"
-                    name = gets.chomp
-                    #ensures the user can't add an empty name
-                        while name == ""
-                        puts "ERROR: Please enter the student's full name"
+                until input.downcase == "y"
+                    puts "Please enter the name of the student"
                         name = gets.chomp
-                        end
-        #stores the student's cohort in a variable
-                puts "Please input student's cohort month"
-                    cohort = gets.chomp
-                    #because the cohorts are based on months and thus should only have 12 options. 
-                    #This conditional ensures that the user can only enter recognized months
-                        until @cohorts.any?{|month| month == cohort.downcase.to_sym}
-                            puts "ERROR: Please enter full name of month and check for typos"
-                            cohort = gets.chomp
-                        end
-                    cohort = cohort.downcase.to_sym
-            #stores the student's birth place in a variable        
-                puts "Please input student's country of birth"
-                    country = gets.chomp
-                    #ensures there are no empty entries
-                        while country == ""
-                        puts "ERROR: Please enter the student's country of origin"
+                        #ensures the user can't add an empty name
+                            while name == ""
+                            puts "ERROR: Please enter the student's full name"
+                            name = gets.chomp
+                            end
+                    #stores the student's cohort in a variable
+                    puts "Please input student's cohort month"
+                        cohort = gets.chomp
+                        #because the cohorts are based on months and thus should only have 12 options. 
+                        #This conditional ensures that the user can only enter recognized months
+                            until @cohorts.any?{|month| month == cohort.downcase.to_sym}
+                                puts "ERROR: Please enter full name of month and check for typos"
+                                cohort = gets.chomp
+                            end
+                        cohort = cohort.downcase.to_sym
+                #stores the student's birth place in a variable        
+                    puts "Please input student's country of birth"
                         country = gets.chomp
-                        end
-             #stores the student's height in a variable, it asks for cm and numbers for consistency           
-                puts "Please input the student's height in cm using numbers only"
-                    height = gets.chomp
-                        while height == "" || height.to_i.to_s != height 
-                        puts "ERROR: Please enter the student's height in cm using numbers only"
+                        #ensures there are no empty entries
+                            while country == ""
+                            puts "ERROR: Please enter the student's country/planet/realm of origin"
+                            country = gets.chomp
+                            end
+                 #stores the student's height in a variable, it asks for cm and numbers for consistency           
+                    puts "Please input the student's height in cm using numbers only"
                         height = gets.chomp
-                        end
+                            while height == "" || height.to_i.to_s != height 
+                            puts "ERROR: Please enter the student's height in cm using numbers only"
+                            height = gets.chomp
+                            end
                 # Stores the student's hobbies in a variable    
-                puts "Please add the student's hobbies"
-                    hobbies = gets.chomp
-                    #Ensures hobby returns a default value if field left blank
-                    hobbies = "none" if hobbies == ""
-                
+                    puts "Please add the student's hobbies"
+                        hobbies = gets.chomp
+                        #Ensures hobby returns a default value if field left blank
+                        hobbies = "none" if hobbies == ""
+                    
+                    puts "Name: #{name}, Cohort: #{cohort}, Place of Origin: #{country}, Height: #{height}cm, Hobbies: #{hobbies}."
+                    puts "Is this information correct? If yes enter 'y' otherwise hit return"
+                    input = gets.chomp
+                end
                 #all of the info we have stored in the variables is concatinated to the students array in a hash with matching keys    
                 @students << {name: name, cohort: cohort, country: country, height: height, hobbies: hobbies}
                 #Displays current student amount
