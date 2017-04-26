@@ -14,7 +14,6 @@ def save_students
     #iterates over the array of students
         @students.each do |student|
             file << [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
-            
             end
     end
     puts "File has been successfully saved"
