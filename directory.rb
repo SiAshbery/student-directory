@@ -26,6 +26,16 @@ def save_students
    end
 end
 
+def load_students
+   file = File.open("students.csv", "r")
+   file.readlines.each do |line|
+       name, cohort, country, height, hobbies = line.chomp.split(",")
+       @students << {name: name, cohort: cohort.to_sym, country: country, height: height, hobbies: hobbies}
+   end 
+   file.close
+   puts "File has been successfully loaded"
+end
+
 def print_header 
     #Displayers the centred header and a dividing line
     puts "The students of Villain Academy".center(150)
@@ -63,6 +73,7 @@ def main_menu_options
         puts "2. Display current students"
         puts "3. Filter students"
         puts "4. Save the list to students.csv"
+        puts "5. Load students from students.csv"
         puts "9. Exit"  
 end
 
@@ -87,6 +98,8 @@ def main_menu_process(selection)
             when "4"
                 save_students
                 #saves the current student list to file
+            when "5"
+                load_students
             when "9"
                 exit
                 #exits program
