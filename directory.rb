@@ -1,34 +1,20 @@
-#Let's put all the students into an array
-#students = [
- #   {name: "Dr. Hannible Lecter", cohort: :november},
-  #  {name: "Darth Vader", cohort: :november},
-   # {name: "Nurse Ratched", cohort: :november},
-    #{name: "Michael Corleone", cohort: :november},
-    #{name: "Alex DeLarge", cohort: :november},
-    #{name: "The Wicked Witch of the West", cohort: :november},
-    #{name: "Terminator", cohort: :november},
-    #{name: "Freddy Kruger", cohort: :november},
-    #{name: "The Joker", cohort: :november},
-    #{name: "Joffrey Baratheon", cohort: :november},
-    #{name: "Norman Bates", cohort: :november},
-    #]
-#and then we print them
+require 'csv'
 
 def cat_students
+    @students = [] if @students.nil?  
  @students << {name: @name, cohort: @cohort.to_sym, country: @country, height: @height, hobbies: @hobbies}   
 end
 
 def save_students
-   # open the file for writing
-   puts "Please enter the file you wish to save to:"
-   filename = STDIN.gets.chomp
+    # open the file for writing
+    puts "Please enter the file you wish to save to:"
+    filename = STDIN.gets.chomp
     puts "WARNING: This file will be overwritten" if File.exist?(filename) #if it exists
-   File.open(filename, "w") do |file|
-   #iterates over the array of students
+    CSV.open(filename, "w") do |file|
+    #iterates over the array of students
         @students.each do |student|
-            student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
-            csv_line = student_data.join(",")
-            file.puts csv_line
+            file << [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
+            
             end
     end
     puts "File has been successfully saved"
@@ -50,17 +36,18 @@ def load_students(filename = "students.csv")
         @students = [] if @students.nil?  
         puts "Please enter file you wish to load from"
         filename = STDIN.gets.chomp
+        
             if !File.exist?(filename)
                 puts "Sorry, this file does not exist" 
                 return
             end
             
-        File.open(filename, "r") do |file|
-            file.readlines.each do |line|
-            @name, @cohort, @country, @height, @hobbies = line.chomp.split(",")
+        CSV.foreach(filename) do |line|
+            puts line
+            @name, @cohort, @country, @height, @hobbies = line.join(",").chomp.split(",")
             cat_students
             end
-        end
+        
    puts "File has been successfully loaded"
 end
 
