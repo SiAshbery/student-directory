@@ -13,7 +13,18 @@
     #{name: "Norman Bates", cohort: :november},
     #]
 #and then we print them
-
+def save_students
+   # open the file for writing
+   file = File.open("students.csv", "w")
+   #iterates over the array of students
+   @students.each do |student|
+       student_data = [student[:name], student[:cohort], student[:country], student[:height], student[:hobbies]]
+       csv_line = student_data.join(",")
+       file.puts csv_line
+       puts "File has been successfully saved"
+       
+   end
+end
 
 def print_header 
     #Displayers the centred header and a dividing line
@@ -51,6 +62,7 @@ def main_menu_options
         puts "1. Add a new student"
         puts "2. Display current students"
         puts "3. Filter students"
+        puts "4. Save the list to students.csv"
         puts "9. Exit"  
 end
 
@@ -72,6 +84,9 @@ def main_menu_process(selection)
             when "3" 
                 student_filter#(students, cohorts)
                 #opens filter options
+            when "4"
+                save_students
+                #saves the current student list to file
             when "9"
                 exit
                 #exits program
